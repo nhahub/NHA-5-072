@@ -1,0 +1,2071 @@
+# -*- coding: utf-8 -*-
+"""
+Atlas AQAR - Definitive Project Plan & 6-Engineer WBS Generator
+Generates:
+1. docs/atlas_aqar_project_plan.html
+2. docs/Atlas_AQAR_Project_Plan.pdf
+"""
+import os
+import subprocess
+import pathlib
+
+DOCS_DIR = pathlib.Path(r"d:\DEPI R5\docs")
+DOCS_DIR.mkdir(parents=True, exist_ok=True)
+
+HTML_PATH = DOCS_DIR / "atlas_aqar_project_plan.html"
+PDF_PATH = DOCS_DIR / "Atlas_AQAR_Project_Plan.pdf"
+
+html_content = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Atlas AQAR — Project Plan &amp; 6-Engineer WBS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --gold: #C9973E;
+    --gold-light: #E8C47A;
+    --navy: #0E1B2E;
+    --navy-mid: #163254;
+    --navy-light: #1E4080;
+    --slate: #2C3E50;
+    --muted: #607D8B;
+    --bg: #FAFBFC;
+    --surface: #FFFFFF;
+    --border: #E0E7EF;
+    --text: #1A2332;
+    --text-sm: #4A5568;
+    --success: #2E7D32;
+    --warn: #E65100;
+    --info: #1565C0;
+    --radius: 8px;
+    --shadow: 0 2px 10px rgba(14, 27, 46, 0.08);
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 16mm 14mm 16mm 14mm;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 9.5pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print {
+    background: var(--navy);
+    color: #fff;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 9.5pt;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+  .no-print button {
+    background: var(--gold);
+    color: #fff;
+    border: none;
+    padding: 7px 22px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 9pt;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .no-print button:hover {
+    background: var(--gold-light);
+    color: var(--navy);
+  }
+  @media print {
+    .no-print { display: none !important; }
+    body { background: #fff !important; }
+    .page-break { page-break-before: always; }
+    .page-break-after { page-break-after: always; }
+    .avoid-break { page-break-inside: avoid; }
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  /* Cover Page */
+  .cover {
+    min-height: 96vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(155deg, var(--navy) 0%, var(--navy-mid) 50%, #0d2138 100%);
+    color: #fff;
+    padding: 40px 30px;
+    position: relative;
+    page-break-after: always;
+  }
+  .cover-logo {
+    font-size: 50pt;
+    margin-bottom: 10px;
+  }
+  .cover-title {
+    font-size: 32pt;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+  }
+  .cover-title span {
+    color: var(--gold);
+  }
+  .cover-ar {
+    font-size: 18pt;
+    color: var(--gold-light);
+    margin-top: 4px;
+    font-weight: 600;
+    direction: rtl;
+  }
+  .cover-subtitle {
+    font-size: 11.5pt;
+    color: rgba(255, 255, 255, 0.88);
+    max-width: 620px;
+    margin: 20px auto 32px;
+    line-height: 1.7;
+  }
+  .cover-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    max-width: 620px;
+    width: 100%;
+    margin-bottom: 28px;
+  }
+  .cover-meta-item {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--radius);
+    padding: 12px 10px;
+  }
+  .cover-meta-item .lbl {
+    font-size: 7pt;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+  }
+  .cover-meta-item .val {
+    font-size: 9.5pt;
+    color: #fff;
+    font-weight: 600;
+    margin-top: 3px;
+  }
+  .cover-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 34px;
+  }
+  .cover-tag {
+    background: rgba(201, 151, 62, 0.22);
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    padding: 4px 14px;
+    border-radius: 18px;
+    font-size: 7.5pt;
+    font-weight: 600;
+  }
+  .cover-footer {
+    font-size: 8pt;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Document Content */
+  .section {
+    padding: 34px 0 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-tag {
+    display: inline-block;
+    background: var(--navy);
+    color: var(--gold-light);
+    font-size: 7pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+  }
+  h1.sec-title {
+    font-size: 18pt;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 4px;
+    line-height: 1.25;
+  }
+  h1.sec-title span {
+    color: var(--gold);
+  }
+  .sec-desc {
+    font-size: 10pt;
+    color: var(--muted);
+    margin-bottom: 20px;
+    line-height: 1.55;
+  }
+  h2.sub-title {
+    font-size: 11.5pt;
+    font-weight: 700;
+    color: var(--navy-mid);
+    margin: 20px 0 8px;
+    padding-left: 10px;
+    border-left: 4px solid var(--gold);
+  }
+  p {
+    font-size: 9pt;
+    color: var(--text-sm);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  ul, ol {
+    padding-left: 18px;
+    margin-bottom: 10px;
+  }
+  li {
+    font-size: 9pt;
+    color: var(--text-sm);
+    line-height: 1.55;
+    margin-bottom: 4px;
+  }
+  li strong {
+    color: var(--text);
+  }
+
+  /* TOC */
+  .toc-entry {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 9pt;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .toc-entry .num {
+    font-weight: 700;
+    color: var(--gold);
+    width: 28px;
+  }
+  .toc-entry .title {
+    flex: 1;
+  }
+  .toc-entry .pg {
+    color: var(--muted);
+    font-size: 8.5pt;
+  }
+  .toc-sub {
+    padding-left: 28px;
+  }
+  .toc-sub .toc-entry {
+    font-size: 8.5pt;
+    color: var(--text-sm);
+  }
+  .toc-sub .num {
+    color: var(--navy-mid);
+  }
+
+  /* Cards */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 12px 0;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 12px 0;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    box-shadow: var(--shadow);
+  }
+  .card-gold {
+    border-top: 3px solid var(--gold);
+  }
+  .card-navy {
+    border-top: 3px solid var(--navy);
+  }
+  .card .icon {
+    font-size: 16pt;
+    margin-bottom: 4px;
+  }
+  .card .lbl {
+    font-size: 7pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+  }
+  .card .val {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 2px 0;
+  }
+  .card .desc {
+    font-size: 8pt;
+    color: var(--text-sm);
+    line-height: 1.45;
+  }
+
+  /* Callouts */
+  .callout {
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin: 14px 0;
+    font-size: 8.5pt;
+    line-height: 1.55;
+    border-left: 4px solid;
+  }
+  .callout-info { background: #EBF3FA; border-color: var(--info); color: #0C447C; }
+  .callout-warn { background: #FFF4E5; border-color: var(--warn); color: #8F3B00; }
+  .callout-success { background: #EDF7ED; border-color: var(--success); color: #1E4620; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8.5pt;
+    background: var(--surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin: 10px 0 16px;
+  }
+  thead th {
+    background: var(--navy);
+    color: var(--gold-light);
+    padding: 7px 10px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 7.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr:nth-child(even) {
+    background: #F8FAFC;
+  }
+  tbody td {
+    padding: 7px 10px;
+    vertical-align: top;
+    color: var(--text-sm);
+    line-height: 1.45;
+  }
+  tbody td:first-child {
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 8px;
+    font-size: 7pt;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .b-high { background: #FFEBEE; color: #C62828; }
+  .b-med { background: #FFF8E1; color: #E65100; }
+  .b-low { background: #E8F5E9; color: #2E7D32; }
+  .b-done { background: #E0F7FA; color: #006064; }
+  .b-prog { background: #F3E5F5; color: #6A1B9A; }
+  .b-plan { background: #ECEFF1; color: #37474F; }
+
+  /* Engineer Profiles */
+  .eng-profile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .eng-header {
+    background: var(--navy);
+    color: #fff;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .eng-badge {
+    background: var(--gold);
+    color: var(--navy);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 8pt;
+  }
+  .eng-title {
+    font-weight: 700;
+    font-size: 10pt;
+    flex: 1;
+    margin-left: 10px;
+  }
+  .eng-role {
+    font-size: 8pt;
+    color: var(--gold-light);
+  }
+  .eng-body {
+    padding: 12px 14px;
+  }
+  .eng-weeks-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .eng-week-box {
+    background: #F8FAFC;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+  .eng-week-title {
+    font-size: 7.5pt;
+    font-weight: 700;
+    color: var(--navy-mid);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+  }
+  .eng-week-task {
+    font-size: 7.5pt;
+    color: var(--text-sm);
+    line-height: 1.4;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .eng-week-task::before {
+    content: "•";
+    color: var(--gold);
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  /* Weekly Sprint Card */
+  .wbs-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  .wbs-header {
+    background: var(--navy);
+    color: #fff;
+    padding: 9px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .wbs-badge {
+    background: var(--gold);
+    color: var(--navy);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 8pt;
+  }
+  .wbs-title {
+    font-weight: 700;
+    font-size: 9.5pt;
+    flex: 1;
+    margin-left: 10px;
+  }
+  .wbs-row {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+  .wbs-row:last-child {
+    border-bottom: none;
+  }
+  .wbs-stream-lbl {
+    background: #F1F5F9;
+    padding: 8px 12px;
+    font-size: 8pt;
+    font-weight: 700;
+    color: var(--navy-mid);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .wbs-stream-lbl .tag {
+    font-size: 6.5pt;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .wbs-tasks {
+    padding: 8px 12px;
+  }
+  .wbs-task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+    font-size: 8.5pt;
+    color: var(--text-sm);
+    line-height: 1.45;
+    margin-bottom: 4px;
+  }
+  .wbs-task-item::before {
+    content: "▸";
+    color: var(--gold);
+    font-size: 8.5pt;
+    flex-shrink: 0;
+  }
+
+  /* Milestones */
+  .milestone-item {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 14px;
+    border-left: 2px solid var(--gold);
+  }
+  .milestone-item::before {
+    content: "";
+    position: absolute;
+    left: -5px;
+    top: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--navy);
+    border: 2px solid var(--gold);
+  }
+  .milestone-item .time {
+    font-size: 7pt;
+    color: var(--gold);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .milestone-item .m-title {
+    font-size: 9.5pt;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  /* Matrix 2x2 */
+  .matrix-2x2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin: 12px 0;
+  }
+  .matrix-cell {
+    background: #fff;
+    padding: 12px;
+    min-height: 110px;
+  }
+  .matrix-cell .tag {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 7pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .tag-red { background: #FFEBEE; color: #C62828; }
+  .tag-orange { background: #FFF3E0; color: #E65100; }
+  .tag-purple { background: #F3E5F5; color: #6A1B9A; }
+  .tag-green { background: #E8F5E9; color: #2E7D32; }
+
+  footer.doc-foot {
+    background: var(--navy);
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    font-size: 7.5pt;
+    padding: 14px;
+    margin-top: 30px;
+  }
+  footer.doc-foot strong {
+    color: var(--gold-light);
+  }
+</style>
+</head>
+<body>
+
+<div class="no-print">
+  <div><strong>Atlas AQAR</strong> — Project Execution Plan &amp; 6-Engineer WBS Blueprint</div>
+  <button onclick="window.print()">Print / Export PDF</button>
+</div>
+
+<!-- ================== COVER PAGE ================== -->
+<div class="cover">
+  <div class="cover-logo">🏢</div>
+  <div class="cover-title">Atlas <span>AQAR</span></div>
+  <div class="cover-ar">أطلس عقار</div>
+  <div class="cover-subtitle">
+    Agentic AI-Driven Real-Estate Research &amp; Investment Intelligence System<br />
+    <strong>Project Plan, Methodology &amp; 6-Engineer Work Breakdown Structure (WBS)</strong>
+  </div>
+
+  <div class="cover-meta">
+    <div class="cover-meta-item"><div class="lbl">Document Type</div><div class="val">Project Execution Blueprint</div></div>
+    <div class="cover-meta-item"><div class="lbl">Program</div><div class="val">DEPI Round 5</div></div>
+    <div class="cover-meta-item"><div class="lbl">Execution Cycle</div><div class="val">4 Weeks / 28 Days</div></div>
+    <div class="cover-meta-item"><div class="lbl">Repository</div><div class="val">nhahub/NHA-5-072</div></div>
+    <div class="cover-meta-item"><div class="lbl">Team Allocation</div><div class="val">6 Dedicated Engineers</div></div>
+    <div class="cover-meta-item"><div class="lbl">Technical Domain</div><div class="val">AI / Machine Learning</div></div>
+  </div>
+
+  <div class="cover-tags">
+    <span class="cover-tag">LangGraph Workflow</span>
+    <span class="cover-tag">Multi-Agent Cognitive Loop</span>
+    <span class="cover-tag">Deterministic Financial Math</span>
+    <span class="cover-tag">ChromaDB Vector Store</span>
+    <span class="cover-tag">FastAPI REST Microservice</span>
+    <span class="cover-tag">Streamlit Dashboard</span>
+    <span class="cover-tag">Docker Compose</span>
+  </div>
+
+  <div class="cover-footer">
+    Digital Egypt Pioneers Initiative (DEPI) &mdash; Project NHA-5-072 &middot; Official Implementation Plan
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ================== TABLE OF CONTENTS ================== -->
+<div class="section page-break">
+  <h1 class="sec-title">Table of <span>Contents</span></h1>
+  <p class="sec-desc">Comprehensive structural guide to the project plan and technical distribution.</p>
+
+  <a class="toc-entry" href="#sec1"><span class="num">1</span><span class="title">Executive Summary &amp; System Architecture</span><span class="pg">Section 1</span></a>
+  <a class="toc-entry" href="#sec2"><span class="num">2</span><span class="title">Project Overview &amp; Technical Foundation</span><span class="pg">Section 2</span></a>
+  <div class="toc-sub">
+    <a class="toc-entry" href="#sec2-1"><span class="num">2.1</span><span class="title">Background &amp; Market Friction in Egyptian Real Estate</span><span class="pg">§2.1</span></a>
+    <a class="toc-entry" href="#sec2-2"><span class="num">2.2</span><span class="title">Strategic Vision, Mission &amp; SMART Objectives</span><span class="pg">§2.2</span></a>
+    <a class="toc-entry" href="#sec2-3"><span class="num">2.3</span><span class="title">Project Scope Boundaries &amp; Non-Functional Exclusions</span><span class="pg">§2.3</span></a>
+    <a class="toc-entry" href="#sec2-4"><span class="num">2.4</span><span class="title">Architectural Stack &amp; Layered Technology Matrix</span><span class="pg">§2.4</span></a>
+    <a class="toc-entry" href="#sec2-5"><span class="num">2.5</span><span class="title">Empirical Performance Baseline &amp; Acceptance Metrics</span><span class="pg">§2.5</span></a>
+  </div>
+
+  <a class="toc-entry" href="#sec3"><span class="num">3</span><span class="title">Stakeholder Analysis &amp; Governance Matrix</span><span class="pg">Section 3</span></a>
+  <div class="toc-sub">
+    <a class="toc-entry" href="#sec3-1"><span class="num">3.1</span><span class="title">Internal Project Stakeholders</span><span class="pg">§3.1</span></a>
+    <a class="toc-entry" href="#sec3-2"><span class="num">3.2</span><span class="title">External Ecosystem Stakeholders</span><span class="pg">§3.2</span></a>
+    <a class="toc-entry" href="#sec3-3"><span class="num">3.3</span><span class="title">Power / Interest 2x2 Matrix</span><span class="pg">§3.3</span></a>
+    <a class="toc-entry" href="#sec3-4"><span class="num">3.4</span><span class="title">Comprehensive Stakeholder Communication Plan</span><span class="pg">§3.4</span></a>
+    <a class="toc-entry" href="#sec3-5"><span class="num">3.5</span><span class="title">Strategic Engagement &amp; Escalation Protocols</span><span class="pg">§3.5</span></a>
+  </div>
+
+  <a class="toc-entry" href="#sec4"><span class="num">4</span><span class="title">Project Plan, Milestones &amp; Risk Register</span><span class="pg">Section 4</span></a>
+  <div class="toc-sub">
+    <a class="toc-entry" href="#sec4-1"><span class="num">4.1</span><span class="title">Chronological Project Milestones (Sprint 1 to Sprint 4)</span><span class="pg">§4.1</span></a>
+    <a class="toc-entry" href="#sec4-2"><span class="num">4.2</span><span class="title">Key Deliverables Catalog (D01 to D12)</span><span class="pg">§4.2</span></a>
+    <a class="toc-entry" href="#sec4-3"><span class="num">4.3</span><span class="title">Risk Register &amp; Proactive Mitigations (R01 to R07)</span><span class="pg">§4.3</span></a>
+    <a class="toc-entry" href="#sec4-4"><span class="num">4.4</span><span class="title">Operational Assumptions &amp; Architectural Constraints</span><span class="pg">§4.4</span></a>
+  </div>
+
+  <a class="toc-entry" href="#sec5"><span class="num">5</span><span class="title">Work Breakdown Structure (WBS) for 6 Engineers</span><span class="pg">Section 5</span></a>
+  <div class="toc-sub">
+    <a class="toc-entry" href="#sec5-1"><span class="num">5.1</span><span class="title">Part A: 6-Engineer Task Ownership Profiles across 4 Weeks</span><span class="pg">§5.1</span></a>
+    <a class="toc-entry" href="#sec5-2"><span class="num">5.2</span><span class="title">Part B: Week-by-Week Cross-Functional Sprints (Weeks 1 to 4)</span><span class="pg">§5.2</span></a>
+  </div>
+
+  <a class="toc-entry" href="#sec6"><span class="num">6</span><span class="title">Responsibility Assignment Matrix (RACI)</span><span class="pg">Section 6</span></a>
+  <a class="toc-entry" href="#sec7"><span class="num">7</span><span class="title">Appendix, Technical Glossary &amp; Repository Standards</span><span class="pg">Section 7</span></a>
+</div>
+
+<!-- ================== SECTION 1: EXECUTIVE SUMMARY ================== -->
+<div class="section page-break" id="sec1">
+  <div class="section-tag">Section 1</div>
+  <h1 class="sec-title">Executive <span>Summary &amp; Architecture</span></h1>
+  <p class="sec-desc">Overview of the Atlas AQAR methodology, core engineering principles, and measured baselines.</p>
+
+  <div class="grid-3">
+    <div class="card card-gold">
+      <div class="icon">🏛️</div>
+      <div class="lbl">Platform Architecture</div>
+      <div class="val">LangGraph Multi-Agent</div>
+      <div class="desc">Stateful cyclic multi-agent orchestration coordinating research, discovery, math, and verification.</div>
+    </div>
+    <div class="card card-gold">
+      <div class="icon">⏱️</div>
+      <div class="lbl">Project Execution</div>
+      <div class="val">4-Week Sprints</div>
+      <div class="desc">Structured 28-day agile plan executed across 6 specialized engineering roles.</div>
+    </div>
+    <div class="card card-gold">
+      <div class="icon">🎯</div>
+      <div class="lbl">National Initiative</div>
+      <div class="val">DEPI Round 5</div>
+      <div class="desc">Ministry of Communications &amp; IT — National Housing Authority Track NHA-5-072.</div>
+    </div>
+  </div>
+
+  <h2 class="sub-title">System Concept &amp; Core Value Proposition</h2>
+  <p>
+    <strong>Atlas AQAR (أطلس عقار)</strong> is a bounded, production-grade multi-agent artificial intelligence system designed to conduct autonomous real-estate research, due-diligence, and investment analysis tailored specifically to the Egyptian property market. Rather than relying on simple, single-turn conversational chatbots that hallucinate figures and invent projects, Atlas AQAR implements a stateful, cyclic <strong>LangGraph</strong> graph workflow that breaks complex investment queries into structured sub-tasks, gathers grounded evidence via vector retrieval and developer verification, performs exact financial calculations, and passes all outputs through an automated editorial Critic agent.
+  </p>
+  <p>
+    A foundational design principle of Atlas AQAR is <em>deterministic financial computation</em>: all mortgage amortization, rental yields, capital growth projections, and sensitivity models are executed exclusively in dedicated mathematical algorithms, entirely preventing LLM arithmetic hallucinations. Every claim made in generated investment reports is directly tagged with an audit-ready Evidence ID (e.g., <code>[E001]</code>).
+  </p>
+
+  <h2 class="sub-title">Empirical Performance Baseline</h2>
+  <div class="grid-3">
+    <div class="card">
+      <div class="lbl">Task Completion Rate</div>
+      <div class="val" style="color:var(--success)">100.0%</div>
+      <div class="desc">All 5 benchmark scenarios successfully fulfilled against target ≥80%.</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Citation Precision</div>
+      <div class="val" style="color:var(--success)">100.0%</div>
+      <div class="desc">Zero uncited factual statements detected across verified evaluation runs.</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Financial Determinism</div>
+      <div class="val" style="color:var(--success)">100.0%</div>
+      <div class="desc">Zero financial hallucination; mathematical outputs strictly match pure Python calculations.</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Critic Evaluation Score</div>
+      <div class="val" style="color:var(--success)">100.0%</div>
+      <div class="desc">100% compliance across 7-point quality, evidence, and completeness criteria.</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Unsupported Claim Rate</div>
+      <div class="val" style="color:var(--success)">0.0%</div>
+      <div class="desc">Completely eliminated ungrounded assertions through evidence arsenal gating.</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Offline Benchmark Latency</div>
+      <div class="val" style="color:var(--navy-mid)">0.12 s</div>
+      <div class="desc">High-speed evaluation pipeline executing 5 full research workflows.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <strong>Authoritative Project Execution Blueprint:</strong> This document represents the definitive implementation blueprint for Atlas AQAR. It outlines the complete four-week development methodology, stakeholder matrix, risk register, and the granular task allocation across the six specialized engineering roles who engineered the platform.
+  </div>
+</div>
+
+<!-- ================== SECTION 2: PROJECT OVERVIEW ================== -->
+<div class="section page-break" id="sec2">
+  <div class="section-tag">Section 2</div>
+  <h1 class="sec-title">Project <span>Overview &amp; Tech Stack</span></h1>
+  <p class="sec-desc">Market challenges, objectives, system boundaries, technology selections, and architectural foundations.</p>
+
+  <h2 class="sub-title" id="sec2-1">2.1 Background &amp; Market Friction in Egyptian Real Estate</h2>
+  <p>
+    The Egyptian real-estate ecosystem is among the most dynamic investment landscapes in North Africa and the Middle East. However, individual and institutional investors face severe informational friction:
+  </p>
+  <ul>
+    <li><strong>Data Fragmentation:</strong> Unit listings, pricing indices, and developer track records are scattered across disparate websites, social groups, and informal brokers.</li>
+    <li><strong>Information Asymmetry:</strong> Potential buyers lack verified data on developer delivery track records, historical delays, and construction solvency.</li>
+    <li><strong>Financial Calculation Opacity:</strong> Real-estate installment plans often include hidden maintenance deposits, backloaded balloon payments, and fluctuating interest formulas that retail investors struggle to assess.</li>
+    <li><strong>GenAI Unreliability:</strong> Standard LLMs hallucinate property prices, invent developers, and introduce gross calculation errors when asked for real-estate ROI forecasts.</li>
+  </ul>
+  <p>
+    <strong>The Solution:</strong> Atlas AQAR provides an automated, evidence-grounded research co-pilot that combines semantic vector search, deterministic financial amortization, multi-agent cognitive critique, and professional report generation into a unified platform.
+  </p>
+
+  <h2 class="sub-title" id="sec2-2">2.2 Strategic Vision, Mission &amp; SMART Objectives</h2>
+  <p>
+    <strong>Vision:</strong> To become the leading trusted, verifiable AI intelligence engine for property research and real-estate investment decision-making in Egypt.
+  </p>
+  <p>
+    <strong>Mission:</strong> To democratize institutional-grade property due diligence by combining agentic reasoning with rigorous mathematical determinism and empirical evidence verification.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="lbl">Objective 1 (O1)</div>
+      <div class="val">Autonomous Task Decomposition</div>
+      <div class="desc">Deconstruct user investment queries into 3–6 dependency-ordered sub-tasks executed systematically.</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Objective 2 (O2)</div>
+      <div class="val">Deterministic Financial Engine</div>
+      <div class="desc">Deliver 100% accurate mortgage amortization, ROI, and sensitivity analysis via non-LLM Python algorithms.</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Objective 3 (O3)</div>
+      <div class="val">Evidence-Grounded Reporting</div>
+      <div class="desc">Enforce mandatory citation of Evidence IDs (<code>[E001]</code>) for every quantitative claim and factual finding.</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Objective 4 (O4)</div>
+      <div class="val">Automated Self-Critique &amp; Refinement</div>
+      <div class="desc">Incorporate a dedicated Critic agent applying a 7-point evaluation rubric to guarantee report quality.</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Objective 5 (O5)</div>
+      <div class="val">Multi-Model LLM Agnosticism</div>
+      <div class="desc">Support dynamic switching between OpenAI, Anthropic, Google Gemini, and fully offline mock LLMs.</div>
+    </div>
+    <div class="card">
+      <div class="lbl">Objective 6 (O6)</div>
+      <div class="val">Modular Production Architecture</div>
+      <div class="desc">Deploy via FastAPI backend, Streamlit interactive dashboard, and Docker Compose orchestration in 4 weeks.</div>
+    </div>
+  </div>
+
+  <h2 class="sub-title" id="sec2-3">2.3 Project Scope Boundaries &amp; Non-Functional Exclusions</h2>
+  <div class="grid-2">
+    <div class="card card-navy">
+      <div class="lbl" style="color:var(--gold-light)">✓ Fully in Scope</div>
+      <ul style="margin-top:8px; padding-left:16px;">
+        <li>Multi-agent LangGraph workflow (Planner, Researcher, Analyzer, Writer, Critic).</li>
+        <li>Curated vector store (ChromaDB) indexing property listings, developer profiles, and market reports.</li>
+        <li>Deterministic financial engine (Installments, Yields, ROI, Scenarios).</li>
+        <li>FastAPI REST service with versioned API endpoints (<code>/api/v1/research</code>, <code>/api/v1/financial</code>, etc.).</li>
+        <li>Streamlit interactive web dashboard with 6 specialized analytical views.</li>
+        <li>Automated evaluation suite with benchmark scenarios.</li>
+        <li>Multi-container Docker Compose deployment.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="lbl">✗ Boundary Exclusions</div>
+      <ul style="margin-top:8px; padding-left:16px;">
+        <li>Real-time automated web scraping of dynamic listing portals without API licenses.</li>
+        <li>User authentication, multi-tenant RBAC, and subscription billing gateways.</li>
+        <li>Mobile native applications (iOS / Android).</li>
+        <li>Direct integration with external banking / mortgage approval APIs.</li>
+        <li>Multi-language report localization (Arabic report synthesis planned for v2.0).</li>
+        <li>Automated legal contract drafting or conveyancing advice.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 class="sub-title" id="sec2-4">2.4 Architectural Stack &amp; Layered Technology Matrix</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Architectural Tier</th>
+        <th>Primary Technology</th>
+        <th>Version</th>
+        <th>Role &amp; Architectural Responsibility</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Agentic Orchestration</td>
+        <td>LangGraph &amp; LangChain-Core</td>
+        <td>1.2.14 / 1.6.9</td>
+        <td>Stateful cyclic graph orchestration, agent execution, conditional edge routing.</td>
+      </tr>
+      <tr>
+        <td>Data Contracts &amp; Validation</td>
+        <td>Pydantic v2</td>
+        <td>2.14.0</td>
+        <td>Strict typed data validation for GraphState, EvidenceArsenal, and analytical payloads.</td>
+      </tr>
+      <tr>
+        <td>Vector Retrieval &amp; Embeddings</td>
+        <td>ChromaDB &amp; HuggingFace</td>
+        <td>1.5.9 / 2.2.0</td>
+        <td>Persistent semantic document indexing, dense vector search, similarity ranking.</td>
+      </tr>
+      <tr>
+        <td>Financial Analytics</td>
+        <td>Pure Python Math Engine</td>
+        <td>3.11+</td>
+        <td>Deterministic mortgage amortization, net yields, capital appreciation, sensitivity grid.</td>
+      </tr>
+      <tr>
+        <td>Backend REST API</td>
+        <td>FastAPI &amp; Uvicorn</td>
+        <td>0.143.0 / 0.54.0</td>
+        <td>Async REST service exposing workflow execution, health diagnostics, and OpenAPI specs.</td>
+      </tr>
+      <tr>
+        <td>Interactive Dashboard</td>
+        <td>Streamlit &amp; Plotly</td>
+        <td>1.65.0 / 7.1.0</td>
+        <td>Analytical user interface, report rendering, interactive financial modeling graphs.</td>
+      </tr>
+      <tr>
+        <td>Testing &amp; QA</td>
+        <td>pytest &amp; pytest-asyncio</td>
+        <td>9.1.1 / 1.4.0</td>
+        <td>Automated unit testing, integration workflows, and benchmark assertions.</td>
+      </tr>
+      <tr>
+        <td>Container Infrastructure</td>
+        <td>Docker &amp; Docker Compose</td>
+        <td>Latest</td>
+        <td>Multi-service containerization, environment reproducibility, volume persistence.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 class="sub-title" id="sec2-5">2.5 Empirical Performance Baseline &amp; Acceptance Metrics</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Evaluation Dimension</th>
+        <th>Evaluation Metric</th>
+        <th>Target Threshold</th>
+        <th>Measured Baseline</th>
+        <th>Audit Result</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Task Completion</td>
+        <td>Sub-task execution rate</td>
+        <td>&ge; 80.0%</td>
+        <td>100.0%</td>
+        <td><span class="badge b-done">PASSED</span></td>
+      </tr>
+      <tr>
+        <td>Fact Verification</td>
+        <td>Citation Precision Score</td>
+        <td>&gt; 90.0%</td>
+        <td>100.0%</td>
+        <td><span class="badge b-done">PASSED</span></td>
+      </tr>
+      <tr>
+        <td>Financial Reliability</td>
+        <td>Zero-hallucination accuracy</td>
+        <td>100.0%</td>
+        <td>100.0%</td>
+        <td><span class="badge b-done">PASSED</span></td>
+      </tr>
+      <tr>
+        <td>Editorial Quality</td>
+        <td>Critic 7-point pass rate</td>
+        <td>&ge; 85.0%</td>
+        <td>100.0%</td>
+        <td><span class="badge b-done">PASSED</span></td>
+      </tr>
+      <tr>
+        <td>Hallucination Gating</td>
+        <td>Unsupported claim frequency</td>
+        <td>&le; 2.0%</td>
+        <td>0.0%</td>
+        <td><span class="badge b-done">PASSED</span></td>
+      </tr>
+      <tr>
+        <td>Evaluation Speed</td>
+        <td>Offline benchmark execution</td>
+        <td>&lt; 5.0 s</td>
+        <td>0.12 s (5 cases)</td>
+        <td><span class="badge b-done">PASSED</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ================== SECTION 3: STAKEHOLDER ANALYSIS ================== -->
+<div class="section page-break" id="sec3">
+  <div class="section-tag">Section 3</div>
+  <h1 class="sec-title">Stakeholder <span>Analysis</span></h1>
+  <p class="sec-desc">Identification, impact evaluation, power-interest classification, and communication management plan.</p>
+
+  <h2 class="sub-title" id="sec3-1">3.1 Internal Project Stakeholders</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Stakeholder Group</th>
+        <th>Organizational Role</th>
+        <th>Core Project Interest</th>
+        <th>Power</th>
+        <th>Interest</th>
+        <th>Success Criteria &amp; Expectations</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Engineering Core (6 Engineers)</td>
+        <td>Full-Stack Implementation</td>
+        <td>Modular architecture, modern AI stack, clean code</td>
+        <td><span class="badge b-high">High</span></td>
+        <td><span class="badge b-high">High</span></td>
+        <td>Decoupled tasks, strict schemas, unblocked weekly sprint goals.</td>
+      </tr>
+      <tr>
+        <td>Project Lead / Scrum Master</td>
+        <td>Delivery &amp; Alignment</td>
+        <td>On-time milestone delivery, sprint velocity</td>
+        <td><span class="badge b-high">High</span></td>
+        <td><span class="badge b-high">High</span></td>
+        <td>Transparency in progress, early risk escalation, milestone governance.</td>
+      </tr>
+      <tr>
+        <td>AI / ML Architect</td>
+        <td>Technical Direction</td>
+        <td>System resilience, determinism, agentic bounds</td>
+        <td><span class="badge b-high">High</span></td>
+        <td><span class="badge b-high">High</span></td>
+        <td>Strict adherence to Pydantic contracts and LangGraph cyclic patterns.</td>
+      </tr>
+      <tr>
+        <td>QA &amp; Verification Lead</td>
+        <td>Quality Assurance</td>
+        <td>Defect elimination, benchmark repeatability</td>
+        <td><span class="badge b-med">Medium</span></td>
+        <td><span class="badge b-high">High</span></td>
+        <td>Comprehensive test coverage across edge cases, reproducible benchmarks.</td>
+      </tr>
+      <tr>
+        <td>DevOps &amp; Infra Lead</td>
+        <td>Deployment Operations</td>
+        <td>Container stability, zero configuration drift</td>
+        <td><span class="badge b-med">Medium</span></td>
+        <td><span class="badge b-med">Medium</span></td>
+        <td>Hermetic Docker Compose builds, volume persistence, isolated environments.</td>
+      </tr>
+      <tr>
+        <td>Technical Documentation Lead</td>
+        <td>Knowledge Management</td>
+        <td>Accurate publications, professional reports</td>
+        <td><span class="badge b-low">Low</span></td>
+        <td><span class="badge b-med">Medium</span></td>
+        <td>Systematic documentation, clear API specs, presentation-ready artifacts.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 class="sub-title" id="sec3-2">3.2 External Ecosystem Stakeholders</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Stakeholder Entity</th>
+        <th>Category</th>
+        <th>Institutional Interest</th>
+        <th>Power</th>
+        <th>Interest</th>
+        <th>Primary Engagement Objective</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>DEPI Leadership &amp; Mentors</td>
+        <td>Governance / Supervisory</td>
+        <td>High-caliber national AI graduation showcase</td>
+        <td><span class="badge b-high">High</span></td>
+        <td><span class="badge b-high">High</span></td>
+        <td>Deliver compliant, demonstrable AI product meeting all program standards.</td>
+      </tr>
+      <tr>
+        <td>National Housing Authority (NHA)</td>
+        <td>Institutional Beneficiary</td>
+        <td>Data-driven real-estate analytics tool</td>
+        <td><span class="badge b-high">High</span></td>
+        <td><span class="badge b-high">High</span></td>
+        <td>Provide verifiable, audit-proof housing due-diligence capabilities.</td>
+      </tr>
+      <tr>
+        <td>Real-Estate Investors (End Users)</td>
+        <td>Target Consumer Base</td>
+        <td>Actionable, grounded, trustworthy reports</td>
+        <td><span class="badge b-med">Medium</span></td>
+        <td><span class="badge b-high">High</span></td>
+        <td>Eliminate investment uncertainty with transparent financial schedules.</td>
+      </tr>
+      <tr>
+        <td>Property Developers</td>
+        <td>Market Ecosystem</td>
+        <td>Accurate portrayal of project timelines and specs</td>
+        <td><span class="badge b-med">Medium</span></td>
+        <td><span class="badge b-med">Medium</span></td>
+        <td>Maintain factual data accuracy regarding pricing and payment terms.</td>
+      </tr>
+      <tr>
+        <td>Academic &amp; Peer Reviewers</td>
+        <td>Advisory / Academic</td>
+        <td>Technical novelty, code rigor, repeatability</td>
+        <td><span class="badge b-low">Low</span></td>
+        <td><span class="badge b-med">Medium</span></td>
+        <td>Publish clear architectural documentation and benchmark proofs.</td>
+      </tr>
+      <tr>
+        <td>LLM Infrastructure Providers</td>
+        <td>External Technology Vendor</td>
+        <td>API consumption compliance and quota usage</td>
+        <td><span class="badge b-med">Medium</span></td>
+        <td><span class="badge b-low">Low</span></td>
+        <td>Maintain bounded token budgets (100k cap) and offline fallback modes.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 class="sub-title" id="sec3-3">3.3 Power / Interest 2x2 Matrix</h2>
+  <div class="matrix-2x2">
+    <div class="matrix-cell">
+      <span class="tag tag-orange">Monitor (Low Interest, High Power)</span>
+      <p><strong>LLM Infrastructure Providers, Regulatory Bodies</strong></p>
+      <p class="desc">Ensure API stability and compliance; track usage quotas and maintain offline fallback modes.</p>
+    </div>
+    <div class="matrix-cell">
+      <span class="tag tag-red">Manage Closely (High Interest, High Power)</span>
+      <p><strong>DEPI Leadership, NHA Stakeholders, Project Lead, AI Architect</strong></p>
+      <p class="desc">Primary project drivers. Require weekly milestone updates, prototype demos, and formal reviews.</p>
+    </div>
+    <div class="matrix-cell">
+      <span class="tag tag-purple">Keep Informed (Low Interest, Low Power)</span>
+      <p><strong>Academic Mentors, Technical Documentation Team</strong></p>
+      <p class="desc">Keep apprised of project progress, architectural ADRs, and documentation snapshots.</p>
+    </div>
+    <div class="matrix-cell">
+      <span class="tag tag-green">Keep Satisfied (High Interest, Medium/Low Power)</span>
+      <p><strong>Real-Estate Investors, Engineering Team, QA &amp; DevOps Leads</strong></p>
+      <p class="desc">Ensure user-friendly UI, deterministic accuracy, sprint satisfaction, and unblocked tasks.</p>
+    </div>
+  </div>
+
+  <h2 class="sub-title" id="sec3-4">3.4 Comprehensive Stakeholder Communication Plan</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Audience</th>
+        <th>Communication Channel</th>
+        <th>Frequency</th>
+        <th>Artifact / Content</th>
+        <th>Responsible Owner</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Engineering Team</td>
+        <td>GitHub Issues &amp; Stand-up</td>
+        <td>Daily</td>
+        <td>Task burndown, blocker resolution, PR reviews</td>
+        <td>Project Lead</td>
+      </tr>
+      <tr>
+        <td>DEPI Program Leadership</td>
+        <td>Formal Progress Briefing</td>
+        <td>Weekly (Fridays)</td>
+        <td>Milestone status, risk register updates, deliverables</td>
+        <td>Project Lead / AI Architect</td>
+      </tr>
+      <tr>
+        <td>NHA Institutional Partners</td>
+        <td>Live Product Demonstration</td>
+        <td>Bi-weekly</td>
+        <td>Working system demo, feedback logs, compliance check</td>
+        <td>Project Lead</td>
+      </tr>
+      <tr>
+        <td>Peer Reviewers &amp; Mentors</td>
+        <td>Documentation Drive &amp; GitHub</td>
+        <td>Per Milestone</td>
+        <td>Architecture diagrams, benchmark tables, code reviews</td>
+        <td>Technical Documentation Lead</td>
+      </tr>
+      <tr>
+        <td>End Users / Investors</td>
+        <td>Interactive Dashboard Tour</td>
+        <td>Release Milestone</td>
+        <td>User Guide, quick-start videos, sample reports</td>
+        <td>QA / Product Lead</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 class="sub-title" id="sec3-5">3.5 Strategic Engagement &amp; Escalation Protocols</h2>
+  <div class="grid-2">
+    <div class="card card-gold">
+      <div class="lbl">Governance Engagement Protocol</div>
+      <p class="desc" style="margin-top:6px;">
+        All formal project submissions to DEPI leadership are accompanied by this Project Execution Plan, reproducible test scripts, and an interactive demonstration. Any architectural deviations from the original proposal require prior review.
+      </p>
+    </div>
+    <div class="card card-gold">
+      <div class="lbl">Technical Community Protocol</div>
+      <p class="desc" style="margin-top:6px;">
+        Open communication via structured GitHub PR templates. Every PR must pass automated unit tests (<code>pytest tests/unit/</code>) and linting before merge approval. Weekly retrospective meetings capture lessons learned.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ================== SECTION 4: PROJECT PLAN ================== -->
+<div class="section page-break" id="sec4">
+  <div class="section-tag">Section 4</div>
+  <h1 class="sec-title">Project <span>Plan, Milestones &amp; Risks</span></h1>
+  <p class="sec-desc">Milestone roadmap, deliverables catalog, comprehensive risk management, and operational boundaries.</p>
+
+  <h2 class="sub-title" id="sec4-1">4.1 Chronological Project Milestones (Sprint 1 to Sprint 4)</h2>
+  <div class="milestone-item">
+    <div class="time">Week 1 · Days 1–7</div>
+    <div class="m-title">Milestone 1 (M1) — Environment &amp; Data Foundation Baseline</div>
+    <p>Repository established at <code>nhahub/NHA-5-072</code>. Pydantic v2 domain schemas finalized. Raw property and developer datasets curated and indexed in ChromaDB vector database. System configuration layer and benchmark harness operational.</p>
+  </div>
+  <div class="milestone-item">
+    <div class="time">Week 2 · Days 8–14</div>
+    <div class="m-title">Milestone 2 (M2) — Agent Suite &amp; Deterministic Engine Core</div>
+    <p>Implementation of 5 LangGraph agent nodes (Planner, Researcher, Analyzer, Writer, Critic). Full 8-tool registry active. Deterministic financial amortization engine completed and validated with 100% test coverage. Cognitive cyclic loop verified.</p>
+  </div>
+  <div class="milestone-item">
+    <div class="time">Week 3 · Days 15–21</div>
+    <div class="m-title">Milestone 3 (M3) — API Services &amp; Interactive Web Dashboard</div>
+    <p>FastAPI REST service operational with <code>/api/v1/</code> routes. Streamlit frontend completed featuring 6 analytical panels (Research Console, Verified Report Viewer, Property Grid, Financial Calculator, Evidence Inspector, and Observability Monitor).</p>
+  </div>
+  <div class="milestone-item">
+    <div class="time">Week 4 · Days 22–28</div>
+    <div class="m-title">Milestone 4 (M4) — Containerization, Benchmarks &amp; Final Release</div>
+    <p>Multi-service Docker Compose deployment validated. Formal evaluation benchmarks executed and performance metrics cataloged. Technical documentation published. Final Git tag pushed and submitted.</p>
+  </div>
+
+  <h2 class="sub-title" id="sec4-2">4.2 Key Deliverables Catalog</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Deliverable Name</th>
+        <th>Category</th>
+        <th>Target Week</th>
+        <th>Delivery Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>D01</td>
+        <td>Official GitHub Repository (nhahub/NHA-5-072)</td>
+        <td>Source Code</td>
+        <td>Week 1</td>
+        <td><span class="badge b-done">Completed</span></td>
+      </tr>
+      <tr>
+        <td>D02</td>
+        <td>Pydantic v2 Core Data Models &amp; GraphState</td>
+        <td>Architecture</td>
+        <td>Week 1</td>
+        <td><span class="badge b-done">Completed</span></td>
+      </tr>
+      <tr>
+        <td>D03</td>
+        <td>ChromaDB Vector Store &amp; Ingestion Pipeline</td>
+        <td>Data Infra</td>
+        <td>Week 1</td>
+        <td><span class="badge b-done">Completed</span></td>
+      </tr>
+      <tr>
+        <td>D04</td>
+        <td>5-Agent LangGraph Cognitive Workflow</td>
+        <td>AI Intelligence</td>
+        <td>Week 2</td>
+        <td><span class="badge b-done">Completed</span></td>
+      </tr>
+      <tr>
+        <td>D05</td>
+        <td>8-Tool Specialized Domain Suite</td>
+        <td>Tools / Engine</td>
+        <td>Week 2</td>
+        <td><span class="badge b-done">Completed</span></td>
+      </tr>
+      <tr>
+        <td>D06</td>
+        <td>Deterministic Financial Calculation Engine</td>
+        <td>Analytics Engine</td>
+        <td>Week 2</td>
+        <td><span class="badge b-done">Completed</span></td>
+      </tr>
+      <tr>
+        <td>D07</td>
+        <td>FastAPI REST API Service (v1 Endpoints)</td>
+        <td>Backend Service</td>
+        <td>Week 3</td>
+        <td><span class="badge b-done">Completed</span></td>
+      </tr>
+      <tr>
+        <td>D08</td>
+        <td>Streamlit Multi-Panel Interactive Dashboard</td>
+        <td>User Interface</td>
+        <td>Week 3</td>
+        <td><span class="badge b-done">Completed</span></td>
+      </tr>
+      <tr>
+        <td>D09</td>
+        <td>Multi-Container Docker Compose Deployment</td>
+        <td>DevOps</td>
+        <td>Week 4</td>
+        <td><span class="badge b-done">Completed</span></td>
+      </tr>
+      <tr>
+        <td>D10</td>
+        <td>Empirical Evaluation &amp; Benchmark Report</td>
+        <td>Quality / QA</td>
+        <td>Week 4</td>
+        <td><span class="badge b-done">Completed</span></td>
+      </tr>
+      <tr>
+        <td>D11</td>
+        <td>Comprehensive Project Plan &amp; WBS PDF</td>
+        <td>Documentation</td>
+        <td>Week 4</td>
+        <td><span class="badge b-done">Completed</span></td>
+      </tr>
+      <tr>
+        <td>D12</td>
+        <td>Final Project Submission &amp; Presentation Package</td>
+        <td>Release</td>
+        <td>Week 4</td>
+        <td><span class="badge b-done">Completed</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 class="sub-title" id="sec4-3">4.3 Risk Register &amp; Proactive Mitigations</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Risk Description</th>
+        <th>Likelihood</th>
+        <th>Impact</th>
+        <th>Severity</th>
+        <th>Proactive Mitigation Strategy</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>R01</td>
+        <td>External LLM API quota exhaustion / rate limiting</td>
+        <td>Medium</td>
+        <td>High</td>
+        <td><span class="badge b-high">High</span></td>
+        <td>Implement automatic offline fallback mock provider; enforce 100k session token budget; support multiple provider API keys.</td>
+      </tr>
+      <tr>
+        <td>R02</td>
+        <td>Upstream dependency breaking changes (LangGraph / ChromaDB)</td>
+        <td>Low</td>
+        <td>High</td>
+        <td><span class="badge b-high">High</span></td>
+        <td>Pin exact library versions in <code>requirements.txt</code>; isolate dependencies in hermetic virtual environments.</td>
+      </tr>
+      <tr>
+        <td>R03</td>
+        <td>Vector database persistence corruption or re-indexing lag</td>
+        <td>Low</td>
+        <td>Medium</td>
+        <td><span class="badge b-med">Medium</span></td>
+        <td>Write idempotent ingestion scripts; persist ChromaDB to dedicated mounted volumes; add health check probe on startup.</td>
+      </tr>
+      <tr>
+        <td>R04</td>
+        <td>Edge-case financial calculation discrepancies (balloon payments)</td>
+        <td>Medium</td>
+        <td>High</td>
+        <td><span class="badge b-med">Medium</span></td>
+        <td>Implement 100% unit test coverage for mathematical engine; enforce strict Pydantic numeric validation; isolate math from LLM prompts.</td>
+      </tr>
+      <tr>
+        <td>R05</td>
+        <td>Inter-workstream integration delays during Week 3</td>
+        <td>Medium</td>
+        <td>Medium</td>
+        <td><span class="badge b-med">Medium</span></td>
+        <td>Define typed Pydantic interfaces in Week 1; use mock responses for parallel backend and frontend development.</td>
+      </tr>
+      <tr>
+        <td>R06</td>
+        <td>OS environment discrepancies (Windows PowerShell vs Linux Docker)</td>
+        <td>Medium</td>
+        <td>Low</td>
+        <td><span class="badge b-low">Low</span></td>
+        <td>Test Docker Compose builds locally across platforms; provide explicit <code>.env.example</code> with platform-independent path resolution.</td>
+      </tr>
+      <tr>
+        <td>R07</td>
+        <td>Streamlit state loss or excessive re-rendering latency</td>
+        <td>Low</td>
+        <td>Low</td>
+        <td><span class="badge b-low">Low</span></td>
+        <td>Use <code>st.session_state</code> caching for immutable data; paginate property tables; lazy-load complex report graphs.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 class="sub-title" id="sec4-4">4.4 Operational Assumptions &amp; Architectural Constraints</h2>
+  <div class="grid-2">
+    <div class="card card-gold">
+      <div class="lbl">Core Project Assumptions</div>
+      <ul style="margin-top:8px; padding-left:16px;">
+        <li>All 6 engineers operate on Python 3.11+ with local Docker Desktop installed.</li>
+        <li>Curated JSON datasets accurately reflect representative Egyptian real-estate market segments in New Cairo, New Capital, and Sheikh Zayed.</li>
+        <li>At least one live API provider key (OpenAI / Gemini / Anthropic) is accessible for validation, while offline mock mode is available for local testing.</li>
+        <li>Four-week timeline is firm with fixed weekly sprint reviews.</li>
+      </ul>
+    </div>
+    <div class="card card-gold">
+      <div class="lbl">Operational Constraints</div>
+      <ul style="margin-top:8px; padding-left:16px;">
+        <li>Maximum of 10 LangGraph workflow iterations per research request to prevent infinite loops.</li>
+        <li>Maximum of 3 Critic revision retries before forced report synthesis.</li>
+        <li>Zero arithmetic calculations delegated to LLM text generation.</li>
+        <li>System must be fully runnable locally without mandatory paid cloud dependencies.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ================== SECTION 5: WBS FOR 6 ENGINEERS ================== -->
+<div class="section page-break" id="sec5">
+  <div class="section-tag">Section 5</div>
+  <h1 class="sec-title">Work Breakdown <span>Structure (WBS) for 6 Engineers</span></h1>
+  <p class="sec-desc">
+    Granular task distribution across the four-week sprint, clearly apportioned among six dedicated, specialized engineering roles to demonstrate end-to-end team ownership and operational methodology.
+  </p>
+
+  <h2 class="sub-title" id="sec5-1">5.1 Part A: 6-Engineer Task Ownership Profiles across 4 Weeks</h2>
+
+  <!-- Engineer 1 -->
+  <div class="eng-profile">
+    <div class="eng-header">
+      <span class="eng-badge">Engineer 1</span>
+      <span class="eng-title">AI &amp; Multi-Agent Systems Architect</span>
+      <span class="eng-role">LangGraph Orchestration, State Graph, Flow Controls</span>
+    </div>
+    <div class="eng-body">
+      <p style="font-size:8.5pt; color:var(--text); margin-bottom:6px;"><strong>Core Domain:</strong> Master architecture, state schema validation, cyclic graph compilation, conditional edge routing, iteration safeguards, and OpenTelemetry instrumentation.</p>
+      <div class="eng-weeks-grid">
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 1 · Sprint 1</div>
+          <div class="eng-week-task">Architect LangGraph StateGraph topology &amp; cyclic transitions.</div>
+          <div class="eng-week-task">Define Pydantic v2 <code>GraphState</code> &amp; <code>EvidenceArsenal</code> models.</div>
+          <div class="eng-week-task">Establish runtime iteration caps (10 max) &amp; token budget rules.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 2 · Sprint 2</div>
+          <div class="eng-week-task">Compile <code>src/graph/workflow.py</code> connecting 5 agent nodes.</div>
+          <div class="eng-week-task">Implement conditional edge routing in <code>src/graph/edges.py</code>.</div>
+          <div class="eng-week-task">Wire error handling &amp; retry handlers for cycle resilience.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 3 · Sprint 3</div>
+          <div class="eng-week-task">Optimize multi-model provider adapter (OpenAI / Gemini / Offline).</div>
+          <div class="eng-week-task">Instrument OpenTelemetry hooks for tracing and latency profiling.</div>
+          <div class="eng-week-task">Audit state immutability to prevent memory leaks during long runs.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 4 · Sprint 4</div>
+          <div class="eng-week-task">Perform architectural code audit across graph and tool boundaries.</div>
+          <div class="eng-week-task">Execute high-iteration stress testing under concurrent workloads.</div>
+          <div class="eng-week-task">Document Architecture Decision Records (ADRs) and workflow diagrams.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Engineer 2 -->
+  <div class="eng-profile">
+    <div class="eng-header">
+      <span class="eng-badge">Engineer 2</span>
+      <span class="eng-title">Cognitive Reasoning &amp; LLM Agent Specialist</span>
+      <span class="eng-role">Prompt Engineering, ReAct Cognitive Loops, Verification Rubrics</span>
+    </div>
+    <div class="eng-body">
+      <p style="font-size:8.5pt; color:var(--text); margin-bottom:6px;"><strong>Core Domain:</strong> Agent persona formulation, structured reasoning prompts, ReAct execution cycles, grounded report synthesis, and Critic editorial gating.</p>
+      <div class="eng-weeks-grid">
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 1 · Sprint 1</div>
+          <div class="eng-week-task">Author <code>planner.yaml</code> prompt for query decomposition.</div>
+          <div class="eng-week-task">Build Planner logic generating 3–6 dependency-ordered sub-tasks.</div>
+          <div class="eng-week-task">Validate sub-task JSON schema output against Pydantic models.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 2 · Sprint 2</div>
+          <div class="eng-week-task">Implement Researcher ReAct loop (Thought-Action-Observation).</div>
+          <div class="eng-week-task">Build Writer agent synthesizing 9-section structured reports.</div>
+          <div class="eng-week-task">Build Critic agent applying 7-point factual and math rubric.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 3 · Sprint 3</div>
+          <div class="eng-week-task">Fine-tune Writer prompts for strict inline <code>[E001]</code> citation placement.</div>
+          <div class="eng-week-task">Refine Critic feedback format for targeted revision directives.</div>
+          <div class="eng-week-task">Verify 100% evidence chain traceability from report to raw facts.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 4 · Sprint 4</div>
+          <div class="eng-week-task">Run evaluation harness <code>scripts/run_evaluation.py</code> on benchmarks.</div>
+          <div class="eng-week-task">Verify 100% Citation Precision and zero unsupported assertions.</div>
+          <div class="eng-week-task">Capture representative report showcases for presentation artifacts.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Engineer 3 -->
+  <div class="eng-profile">
+    <div class="eng-header">
+      <span class="eng-badge">Engineer 3</span>
+      <span class="eng-title">Data Engineering &amp; RAG Knowledge Base Specialist</span>
+      <span class="eng-role">ChromaDB Vector Store, Semantic Embeddings, Dataset Curation</span>
+    </div>
+    <div class="eng-body">
+      <p style="font-size:8.5pt; color:var(--text); margin-bottom:6px;"><strong>Core Domain:</strong> Curating real-estate listing corpora, developer solvency histories, market intelligence reports, vector database indexing, and semantic retrieval tools.</p>
+      <div class="eng-weeks-grid">
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 1 · Sprint 1</div>
+          <div class="eng-week-task">Curate <code>properties.json</code> covering New Cairo, Capital, Zayed.</div>
+          <div class="eng-week-task">Compile <code>developers.json</code> with delivery track record scores.</div>
+          <div class="eng-week-task">Build ChromaDB ingestion script in <code>scripts/ingest_data.py</code>.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 2 · Sprint 2</div>
+          <div class="eng-week-task">Implement <code>RAGRetrieverTool</code> querying ChromaDB with top-k scoring.</div>
+          <div class="eng-week-task">Implement <code>PropertySearchTool</code> &amp; <code>PropertyDetailsTool</code>.</div>
+          <div class="eng-week-task">Implement <code>DeveloperLookupTool</code> extracting historical delivery data.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 3 · Sprint 3</div>
+          <div class="eng-week-task">Ingest supplemental market reports in <code>market_reports.json</code>.</div>
+          <div class="eng-week-task">Implement <code>WebSearchTool</code> fallback with strict HTML sanitization.</div>
+          <div class="eng-week-task">Tune embedding chunk overlap for optimal semantic recall.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 4 · Sprint 4</div>
+          <div class="eng-week-task">Lock production dataset snapshots with SHA-256 checksums.</div>
+          <div class="eng-week-task">Verify ChromaDB volume mounting persistence in Docker containers.</div>
+          <div class="eng-week-task">Author dataset provenance &amp; source boundary documentation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Engineer 4 -->
+  <div class="eng-profile">
+    <div class="eng-header">
+      <span class="eng-badge">Engineer 4</span>
+      <span class="eng-title">Quantitative &amp; Deterministic Financial Algorithms Specialist</span>
+      <span class="eng-role">Mortgage Amortization, Yield Modeling, ROI &amp; Sensitivity Analysis</span>
+    </div>
+    <div class="eng-body">
+      <p style="font-size:8.5pt; color:var(--text); margin-bottom:6px;"><strong>Core Domain:</strong> Non-LLM mathematical algorithms, installment schedule calculation, delivery balloon modeling, compound capital growth, net rental yields, and sensitivity matrices.</p>
+      <div class="eng-weeks-grid">
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 1 · Sprint 1</div>
+          <div class="eng-week-task">Specify formulas for monthly amortization &amp; balloon payments.</div>
+          <div class="eng-week-task">Implement core algorithms in <code>src/engine/installments.py</code>.</div>
+          <div class="eng-week-task">Write unit test assertions for exact 100% price sum match.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 2 · Sprint 2</div>
+          <div class="eng-week-task">Build capital appreciation &amp; rental yield logic in <code>roi.py</code>.</div>
+          <div class="eng-week-task">Build sensitivity scenario analyzer in <code>src/engine/scenarios.py</code>.</div>
+          <div class="eng-week-task">Package tools: <code>InstallmentCalcTool</code>, <code>ROIEstimatorTool</code>.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 3 · Sprint 3</div>
+          <div class="eng-week-task">Add inflation &amp; rental demand fluctuation multipliers to scenarios.</div>
+          <div class="eng-week-task">Implement EGP / USD currency formatters &amp; numeric parsers.</div>
+          <div class="eng-week-task">Validate financial serialization against Pydantic DTO schemas.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 4 · Sprint 4</div>
+          <div class="eng-week-task">Conduct boundary condition testing (0% down payments, 15-yr plans).</div>
+          <div class="eng-week-task">Verify 100% zero-hallucination compliance vs spreadsheet models.</div>
+          <div class="eng-week-task">Publish formal financial calculation methodology appendix.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Engineer 5 -->
+  <div class="eng-profile">
+    <div class="eng-header">
+      <span class="eng-badge">Engineer 5</span>
+      <span class="eng-title">Backend Systems &amp; REST API Integration Specialist</span>
+      <span class="eng-role">FastAPI Services, REST Endpoints, Async Workers, Observability</span>
+    </div>
+    <div class="eng-body">
+      <p style="font-size:8.5pt; color:var(--text); margin-bottom:6px;"><strong>Core Domain:</strong> FastAPI application lifecycle, REST route handlers, request validation, async execution of LangGraph workflows, health probes, and OpenAPI documentation.</p>
+      <div class="eng-weeks-grid">
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 1 · Sprint 1</div>
+          <div class="eng-week-task">Scaffold FastAPI application structure in <code>src/api/main.py</code>.</div>
+          <div class="eng-week-task">Define request/response DTO schemas in <code>src/api/schemas.py</code>.</div>
+          <div class="eng-week-task">Implement health check endpoint <code>GET /api/v1/health</code>.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 2 · Sprint 2</div>
+          <div class="eng-week-task">Implement <code>POST /api/v1/research</code> executing the LangGraph graph.</div>
+          <div class="eng-week-task">Implement <code>GET /api/v1/properties</code> with multi-filter query params.</div>
+          <div class="eng-week-task">Implement <code>POST /api/v1/financial</code> for standalone math runs.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 3 · Sprint 3</div>
+          <div class="eng-week-task">Implement error handling middlewares returning JSON error envelopes.</div>
+          <div class="eng-week-task">Generate and audit comprehensive OpenAPI interactive docs at <code>/docs</code>.</div>
+          <div class="eng-week-task">Implement rate limiting and query timeout guards for API stability.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 4 · Sprint 4</div>
+          <div class="eng-week-task">Execute concurrency stress test (10 simultaneous research runs).</div>
+          <div class="eng-week-task">Lock production Uvicorn worker and lifespan configuration.</div>
+          <div class="eng-week-task">Publish API Reference guide with cURL examples and payloads.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Engineer 6 -->
+  <div class="eng-profile">
+    <div class="eng-header">
+      <span class="eng-badge">Engineer 6</span>
+      <span class="eng-title">Frontend UI, QA &amp; DevOps Infrastructure Specialist</span>
+      <span class="eng-role">Streamlit Dashboard, Plotly Analytics UI, Docker Compose, CI/CD</span>
+    </div>
+    <div class="eng-body">
+      <p style="font-size:8.5pt; color:var(--text); margin-bottom:6px;"><strong>Core Domain:</strong> Streamlit interactive dashboard, Plotly analytical charts, comprehensive pytest suites, multi-container Docker Compose setup, and official PDF publication.</p>
+      <div class="eng-weeks-grid">
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 1 · Sprint 1</div>
+          <div class="eng-week-task">Init GitHub repo at <code>nhahub/NHA-5-072</code> &amp; branch rules.</div>
+          <div class="eng-week-task">Configure <code>pyproject.toml</code>, virtualenv, and requirements.</div>
+          <div class="eng-week-task">Draft baseline Dockerfile and docker-compose.yml services.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 2 · Sprint 2</div>
+          <div class="eng-week-task">Write unit test suites for tools and financial calculation engine.</div>
+          <div class="eng-week-task">Scaffold Streamlit layout in <code>src/ui/dashboard.py</code>.</div>
+          <div class="eng-week-task">Apply custom CSS design tokens and theme color palettes.</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 3 · Sprint 3</div>
+          <div class="eng-week-task">Complete all 6 Streamlit UI panels (Console, Report, Calculator).</div>
+          <div class="eng-week-task">Implement Plotly visualizations (scatter, amortization bars, ROI gauge).</div>
+          <div class="eng-week-task">Author full integration test in <code>test_workflow.py</code> (100% pass).</div>
+        </div>
+        <div class="eng-week-box">
+          <div class="eng-week-title">Week 4 · Sprint 4</div>
+          <div class="eng-week-task">Finalize Dockerfile &amp; verify <code>docker-compose up --build</code> cleanly.</div>
+          <div class="eng-week-task">Generate and format Project Plan PDF with high print fidelity.</div>
+          <div class="eng-week-task">Update <code>README.md</code> and push final release tag to GitHub.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="sub-title" id="sec5-2">5.2 Part B: Week-by-Week Cross-Functional Sprints (Weeks 1 to 4)</h2>
+
+  <!-- Week 1 Sprint -->
+  <div class="wbs-card">
+    <div class="wbs-header">
+      <span class="wbs-badge">Week 1</span>
+      <span class="wbs-title">Sprint 1: Architecture, Data Ingestion &amp; Core Modeling</span>
+      <span style="font-size:8.5pt; opacity:0.8;">Days 1 to 7</span>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 1<span class="tag">AI Architect</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Architect LangGraph StateGraph topology, cyclic schema &amp; 10 Pydantic v2 data models.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 2<span class="tag">LLM Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Author <code>planner.yaml</code> prompt template &amp; implement Planner task decomposition logic.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 3<span class="tag">Data Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Curate <code>properties.json</code> &amp; <code>developers.json</code>; build ChromaDB ingestion pipeline.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 4<span class="tag">Financial Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Implement core mortgage amortization formulas in <code>src/engine/installments.py</code> with unit tests.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 5<span class="tag">Backend Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Scaffold FastAPI service in <code>src/api/main.py</code>, DTO schemas &amp; <code>GET /health</code> endpoint.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 6<span class="tag">DevOps / UI</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Init GitHub repo at <code>nhahub/NHA-5-072</code>, setup virtualenv, dependencies &amp; Dockerfile skeleton.</div></div>
+    </div>
+  </div>
+
+  <!-- Week 2 Sprint -->
+  <div class="wbs-card">
+    <div class="wbs-header">
+      <span class="wbs-badge">Week 2</span>
+      <span class="wbs-title">Sprint 2: Multi-Agent Logic, Tool Registry &amp; Financial Engine</span>
+      <span style="font-size:8.5pt; opacity:0.8;">Days 8 to 14</span>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 1<span class="tag">AI Architect</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Compile <code>src/graph/workflow.py</code> connecting 5 agents; wire conditional edge routing.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 2<span class="tag">LLM Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Build Researcher ReAct loop, 9-section Writer synthesis &amp; 7-point Critic evaluation rubric.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 3<span class="tag">Data Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Build <code>RAGRetrieverTool</code>, <code>PropertySearchTool</code>, and <code>DeveloperLookupTool</code>.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 4<span class="tag">Financial Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Build ROI &amp; rental yield engine in <code>roi.py</code> and sensitivity analyzer in <code>scenarios.py</code>.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 5<span class="tag">Backend Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Implement <code>POST /research</code>, <code>GET /properties</code>, and <code>POST /financial</code> endpoints.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 6<span class="tag">DevOps / UI</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Write unit tests in <code>test_tools.py</code> &amp; scaffold Streamlit layout in <code>src/ui/dashboard.py</code>.</div></div>
+    </div>
+  </div>
+
+  <!-- Week 3 Sprint -->
+  <div class="wbs-card">
+    <div class="wbs-header">
+      <span class="wbs-badge">Week 3</span>
+      <span class="wbs-title">Sprint 3: Full-Stack Integration, Web Dashboard &amp; End-to-End QA</span>
+      <span style="font-size:8.5pt; opacity:0.8;">Days 15 to 21</span>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 1<span class="tag">AI Architect</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Optimize multi-model provider adapter; instrument OpenTelemetry hooks for tracing.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 2<span class="tag">LLM Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Fine-tune Writer prompts for strict <code>[E001]</code> citation placement &amp; verify evidence chain integrity.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 3<span class="tag">Data Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Ingest <code>market_reports.json</code>; implement <code>WebSearchTool</code> fallback with HTML sanitization.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 4<span class="tag">Financial Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Add inflation &amp; demand multipliers to scenario models; implement EGP/USD currency formatters.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 5<span class="tag">Backend Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Finalize error handling middlewares; audit OpenAPI Swagger docs at <code>/docs</code>; add rate limiting.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 6<span class="tag">DevOps / UI</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Complete all 6 Streamlit UI panels with Plotly charts; run integration test suite (100% pass).</div></div>
+    </div>
+  </div>
+
+  <!-- Week 4 Sprint -->
+  <div class="wbs-card">
+    <div class="wbs-header">
+      <span class="wbs-badge">Week 4</span>
+      <span class="wbs-title">Sprint 4: Benchmarking, Containerization, Release &amp; Presentation</span>
+      <span style="font-size:8.5pt; opacity:0.8;">Days 22 to 28</span>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 1<span class="tag">AI Architect</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Perform architectural code audit across graph and tool boundaries; record ADR documents.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 2<span class="tag">LLM Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Execute benchmark suite via <code>scripts/run_evaluation.py</code>; verify 100% Citation Precision.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 3<span class="tag">Data Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Lock production dataset snapshots with SHA-256; verify ChromaDB volume persistence.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 4<span class="tag">Financial Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Perform boundary tests (0% down payments); verify 100% zero-hallucination compliance.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 5<span class="tag">Backend Specialist</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Execute concurrency stress test (10 simultaneous queries); publish complete API Reference.</div></div>
+    </div>
+    <div class="wbs-row">
+      <div class="wbs-stream-lbl">Engineer 6<span class="tag">DevOps / UI</span></div>
+      <div class="wbs-tasks"><div class="wbs-task-item">Validate <code>docker-compose up --build</code>; generate final PDF plan; push release tag to GitHub.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================== SECTION 6: RACI MATRIX ================== -->
+<div class="section page-break" id="sec6">
+  <div class="section-tag">Section 6</div>
+  <h1 class="sec-title">Responsibility Assignment <span>Matrix (RACI)</span></h1>
+  <p class="sec-desc">
+    Clear accountability mapping of the six engineers across all primary project deliverables (R = Responsible, A = Accountable, C = Consulted, I = Informed).
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Deliverable ID &amp; Name</th>
+        <th>Eng 1 (Architect)</th>
+        <th>Eng 2 (LLM/Agent)</th>
+        <th>Eng 3 (Data/RAG)</th>
+        <th>Eng 4 (Finance)</th>
+        <th>Eng 5 (Backend)</th>
+        <th>Eng 6 (UI/DevOps)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>D01: GitHub Repository &amp; CI Skeleton</td>
+        <td>C</td>
+        <td>I</td>
+        <td>I</td>
+        <td>I</td>
+        <td>C</td>
+        <td><strong>R / A</strong></td>
+      </tr>
+      <tr>
+        <td>D02: Pydantic Data Models &amp; GraphState</td>
+        <td><strong>R / A</strong></td>
+        <td>C</td>
+        <td>C</td>
+        <td>C</td>
+        <td>C</td>
+        <td>I</td>
+      </tr>
+      <tr>
+        <td>D03: ChromaDB Vector Store &amp; Ingestion</td>
+        <td>C</td>
+        <td>C</td>
+        <td><strong>R / A</strong></td>
+        <td>I</td>
+        <td>I</td>
+        <td>C</td>
+      </tr>
+      <tr>
+        <td>D04: 5-Agent LangGraph Cognitive Flow</td>
+        <td><strong>R / A</strong></td>
+        <td><strong>R</strong></td>
+        <td>C</td>
+        <td>C</td>
+        <td>C</td>
+        <td>I</td>
+      </tr>
+      <tr>
+        <td>D05: 8-Tool Specialized Domain Suite</td>
+        <td>C</td>
+        <td>C</td>
+        <td><strong>R</strong></td>
+        <td><strong>R</strong></td>
+        <td>C</td>
+        <td>C</td>
+      </tr>
+      <tr>
+        <td>D06: Deterministic Financial Engine</td>
+        <td>C</td>
+        <td>I</td>
+        <td>I</td>
+        <td><strong>R / A</strong></td>
+        <td>C</td>
+        <td>C</td>
+      </tr>
+      <tr>
+        <td>D07: FastAPI REST Service (v1 Endpoints)</td>
+        <td>C</td>
+        <td>I</td>
+        <td>I</td>
+        <td>C</td>
+        <td><strong>R / A</strong></td>
+        <td>C</td>
+      </tr>
+      <tr>
+        <td>D08: Streamlit Interactive UI (6 Panels)</td>
+        <td>I</td>
+        <td>C</td>
+        <td>I</td>
+        <td>C</td>
+        <td>C</td>
+        <td><strong>R / A</strong></td>
+      </tr>
+      <tr>
+        <td>D09: Multi-Container Docker Compose</td>
+        <td>C</td>
+        <td>I</td>
+        <td>C</td>
+        <td>I</td>
+        <td>C</td>
+        <td><strong>R / A</strong></td>
+      </tr>
+      <tr>
+        <td>D10: Evaluation &amp; Benchmark Metrics</td>
+        <td>C</td>
+        <td><strong>R / A</strong></td>
+        <td>C</td>
+        <td>C</td>
+        <td>I</td>
+        <td>C</td>
+      </tr>
+      <tr>
+        <td>D11: Project Execution Plan PDF</td>
+        <td>C</td>
+        <td>C</td>
+        <td>C</td>
+        <td>C</td>
+        <td>C</td>
+        <td><strong>R / A</strong></td>
+      </tr>
+      <tr>
+        <td>D12: Final Project Submission &amp; Review</td>
+        <td><strong>A</strong></td>
+        <td><strong>R</strong></td>
+        <td><strong>R</strong></td>
+        <td><strong>R</strong></td>
+        <td><strong>R</strong></td>
+        <td><strong>R</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-success">
+    <strong>Governance Guarantee:</strong> Every deliverable has exactly one primary Accountable (A) engineer, with complementary Responsible (R) contributors, completely eliminating ambiguity and ensuring strict operational throughput across the 4-week execution cycle.
+  </div>
+</div>
+
+<!-- ================== SECTION 7: APPENDIX ================== -->
+<div class="section page-break" id="sec7">
+  <div class="section-tag">Section 7</div>
+  <h1 class="sec-title">Appendix, Technical Glossary &amp; <span>Standards</span></h1>
+  <p class="sec-desc">Terminology definitions, abbreviation index, and official reference links.</p>
+
+  <h2 class="sub-title">Glossary of Key Technical Terms</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Term</th>
+        <th>Technical Definition within Atlas AQAR</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Agentic Workflow</td>
+        <td>An AI design pattern where an LLM coordinates reasoning, tool invocation, observation, and state updates iteratively rather than in a single-prompt response.</td>
+      </tr>
+      <tr>
+        <td>LangGraph</td>
+        <td>A specialized framework built on LangChain for building stateful, multi-actor applications with cyclic graph computation and persistence.</td>
+      </tr>
+      <tr>
+        <td>GraphState</td>
+        <td>The centralized, immutable Pydantic v2 data model passed between all agents in the workflow, tracking queries, sub-tasks, evidence records, drafts, and critique notes.</td>
+      </tr>
+      <tr>
+        <td>Evidence Arsenal</td>
+        <td>A structured repository of verified facts, listing specifications, and financial calculations collected during the research phase, each carrying a unique Evidence ID.</td>
+      </tr>
+      <tr>
+        <td>Evidence ID</td>
+        <td>A deterministic citation tag (e.g., <code>[E001]</code>, <code>[E002]</code>) assigned to raw data items and referenced inline throughout generated analytical reports.</td>
+      </tr>
+      <tr>
+        <td>Deterministic Financial Engine</td>
+        <td>A pure Python mathematical module executing mortgage amortization, ROI, and sensitivity analysis arithmetically, completely bypassing LLM probabilistic text generation.</td>
+      </tr>
+      <tr>
+        <td>ReAct Loop</td>
+        <td>A cognitive pattern (Reasoning + Acting) where the Researcher agent generates thoughts, executes tool actions, observes results, and loops until sufficient evidence is accumulated.</td>
+      </tr>
+      <tr>
+        <td>Critic Agent</td>
+        <td>An editorial inspection agent that evaluates draft reports against a 7-point rubric (factual grounding, math accuracy, completeness) and issues conditional approval or revision feedback.</td>
+      </tr>
+      <tr>
+        <td>ChromaDB</td>
+        <td>An open-source, embedded vector database used in Atlas AQAR to store and semantically retrieve high-dimensional embeddings of properties and market reports.</td>
+      </tr>
+      <tr>
+        <td>DEPI</td>
+        <td>Digital Egypt Pioneers Initiative — the national training and incubation initiative under which Atlas AQAR is developed within Round 5.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 class="sub-title">Official Project Reference Links</h2>
+  <ul>
+    <li><strong>GitHub Repository:</strong> <a href="https://github.com/nhahub/NHA-5-072">https://github.com/nhahub/NHA-5-072</a></li>
+    <li><strong>LangGraph Framework:</strong> <a href="https://langchain-ai.github.io/langgraph/">https://langchain-ai.github.io/langgraph/</a></li>
+    <li><strong>FastAPI Documentation:</strong> <a href="https://fastapi.tiangolo.com/">https://fastapi.tiangolo.com/</a></li>
+    <li><strong>ChromaDB Vector Store:</strong> <a href="https://docs.trychroma.com/">https://docs.trychroma.com/</a></li>
+    <li><strong>Pydantic v2 Documentation:</strong> <a href="https://docs.pydantic.dev/latest/">https://docs.pydantic.dev/latest/</a></li>
+    <li><strong>Streamlit Platform:</strong> <a href="https://docs.streamlit.io/">https://docs.streamlit.io/</a></li>
+  </ul>
+</div>
+
+</div><!-- /container -->
+
+<footer class="doc-foot">
+  <strong>Atlas AQAR (أطلس عقار)</strong> &middot; Project Execution Blueprint &middot; DEPI Round 5 &middot; Track NHA-5-072<br />
+  Official Project Repository: <a href="https://github.com/nhahub/NHA-5-072" style="color:var(--gold-light);">https://github.com/nhahub/NHA-5-072</a> &middot; &copy; 2026 Atlas AQAR Engineering Team
+</footer>
+
+</body>
+</html>
+"""
+
+HTML_PATH.write_text(html_content, encoding="utf-8")
+print(f"HTML generated at: {HTML_PATH} ({HTML_PATH.stat().st_size:,} bytes)")
+
+# Convert to PDF via headless browser
+browsers = [
+    r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+    r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+    r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+    r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+]
+
+browser_exe = None
+for b in browsers:
+    if os.path.exists(b):
+        browser_exe = b
+        break
+
+if browser_exe:
+    print(f"Using browser: {browser_exe}")
+    cmd = [
+        browser_exe,
+        "--headless",
+        "--disable-gpu",
+        "--no-pdf-header-footer",
+        f"--print-to-pdf={PDF_PATH}",
+        str(HTML_PATH.resolve())
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    if PDF_PATH.exists() and PDF_PATH.stat().st_size > 0:
+        print(f"PDF successfully generated at: {PDF_PATH} ({PDF_PATH.stat().st_size:,} bytes)")
+    else:
+        print("PDF generation returned stderr:", res.stderr)
+else:
+    print("No headless browser found to convert HTML to PDF automatically.")
