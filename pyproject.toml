@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "atlas-aqar"
+version = "0.1.0"
+description = "Agentic AI-Driven Real-Estate Research and Investment Intelligence System"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Atlas AQAR Team" }
+]
+dependencies = [
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.2.0",
+    "fastapi>=0.111.0",
+    "uvicorn>=0.30.0",
+    "httpx>=0.27.0",
+    "streamlit>=1.35.0",
+    "plotly>=5.22.0",
+    "chromadb>=0.5.0",
+    "python-dotenv>=1.0.1",
+    "pyyaml>=6.0.1",
+    "tenacity>=8.3.0",
+    "langchain-core>=0.2.0",
+    "langgraph>=0.1.0",
+    "typing-extensions>=4.11.0",
+    "beautifulsoup4>=4.12.0",
+    "ddgs>=9.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.23.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*", "config*"]
+
+[tool.pyright]
+include = ["src", "config", "tests", "scripts"]
+extraPaths = ["."]
+

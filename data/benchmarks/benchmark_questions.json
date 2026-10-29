@@ -1,0 +1,45 @@
+[
+  {
+    "benchmark_id": "BM001",
+    "category": "normal",
+    "query": "Find me a 3-bedroom apartment in New Cairo under 15 million EGP with an 8-year payment plan and calculate projected 5-year ROI.",
+    "expected_location": "New Cairo",
+    "expected_property_type": "apartment",
+    "expected_bedrooms": 3,
+    "max_budget": 15000000.0,
+    "min_evidence_count": 3
+  },
+  {
+    "benchmark_id": "BM002",
+    "category": "complex",
+    "query": "Compare standalone villas and townhouses in Sheikh Zayed and New Zayed with a budget of 35M EGP. Investigate developer solvency and analyze sensitivity under conservative market appreciation.",
+    "expected_location": "Sheikh Zayed",
+    "expected_property_type": "villa",
+    "max_budget": 35000000.0,
+    "min_evidence_count": 3
+  },
+  {
+    "benchmark_id": "BM003",
+    "category": "financial",
+    "query": "Calculate the quarterly installment schedule and down payment for an 8M EGP apartment in 6th of October over 8 years with 0% interest.",
+    "expected_location": "6th of October",
+    "expected_property_type": "apartment",
+    "max_budget": 8000000.0,
+    "min_evidence_count": 2
+  },
+  {
+    "benchmark_id": "BM004",
+    "category": "unanswerable",
+    "query": "Find me a beachfront palace in downtown Cairo overlooking the Mediterranean for under 50,000 EGP.",
+    "expected_location": "Downtown Cairo",
+    "max_budget": 50000.0,
+    "min_evidence_count": 0
+  },
+  {
+    "benchmark_id": "BM005",
+    "category": "market_context",
+    "query": "What is the impact of the Ras El Hekma development on coastal chalet rental yields and holiday occupancy?",
+    "expected_location": "North Coast",
+    "min_evidence_count": 2
+  }
+]

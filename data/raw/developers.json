@@ -1,0 +1,112 @@
+[
+  {
+    "developer_id": "DEV_001",
+    "name": "Emaar Misr",
+    "established_year": 1997,
+    "headquarters": "Cairo, Egypt / Dubai, UAE",
+    "notable_projects": ["Mivida", "Marassi", "Uptown Cairo", "Cairo Gate", "Belle Vie"],
+    "total_delivered_units": 25000,
+    "reputation_notes": "Tier-1 multinational master developer known for timely delivery, premium lifestyle amenities, and strong secondary market liquidity.",
+    "financial_solvency_rating": "AAA",
+    "evidence_ids": ["E101"]
+  },
+  {
+    "developer_id": "DEV_002",
+    "name": "SODIC",
+    "established_year": 1996,
+    "headquarters": "Sheikh Zayed, Giza",
+    "notable_projects": ["Villette", "SODIC West", "The Estates", "Eastown", "Karmell", "June"],
+    "total_delivered_units": 18000,
+    "reputation_notes": "Leading Egyptian publicly traded developer on EGX with outstanding track record in West and East Cairo, high build quality and active community management.",
+    "financial_solvency_rating": "AA+",
+    "evidence_ids": ["E102"]
+  },
+  {
+    "developer_id": "DEV_003",
+    "name": "Palm Hills Developments",
+    "established_year": 1997,
+    "headquarters": "Smart Village, 6th of October",
+    "notable_projects": ["Badya", "Palm Hills October", "Palm Hills New Cairo", "Hacienda Bay", "Hacienda White"],
+    "total_delivered_units": 22000,
+    "reputation_notes": "Major listed developer with expansive land bank; pioneer in integrated smart city masterplanning and premier luxury North Coast resorts.",
+    "financial_solvency_rating": "AA",
+    "evidence_ids": ["E103"]
+  },
+  {
+    "developer_id": "DEV_004",
+    "name": "Talaat Moustafa Group",
+    "established_year": 1970,
+    "headquarters": "Dokki, Giza",
+    "notable_projects": ["Madinaty", "Al Rehab", "Noor City", "Celia", "SouthMED", "Banann (Riyadh)"],
+    "total_delivered_units": 120000,
+    "reputation_notes": "Largest private real-estate conglomerate in Egypt by market capitalization, specializing in self-sufficient multi-thousand-acre mega cities.",
+    "financial_solvency_rating": "AAA",
+    "evidence_ids": ["E104"]
+  },
+  {
+    "developer_id": "DEV_005",
+    "name": "Mountain View",
+    "established_year": 2005,
+    "headquarters": "New Cairo, Egypt",
+    "notable_projects": ["Mountain View iCity New Cairo", "Mountain View iCity October", "Mountain View Ras El Hikma", "Chillout Park"],
+    "total_delivered_units": 15000,
+    "reputation_notes": "Pioneer of American-style suburban architecture and the 'Science of Happiness' community design philosophy.",
+    "financial_solvency_rating": "AA",
+    "evidence_ids": ["E105"]
+  },
+  {
+    "developer_id": "DEV_006",
+    "name": "Misr Italia",
+    "established_year": 1998,
+    "headquarters": "New Cairo, Egypt",
+    "notable_projects": ["Il Bosco New Capital", "Vinci", "Il Bosco City Mostakbal", "Kai Sokhna", "Solare Ras El Hekma"],
+    "total_delivered_units": 8000,
+    "reputation_notes": "Rapidly growing developer with early presence in the New Administrative Capital and design-centric concepts.",
+    "financial_solvency_rating": "A+",
+    "evidence_ids": ["E106"]
+  },
+  {
+    "developer_id": "DEV_007",
+    "name": "Tatweer Misr",
+    "established_year": 2014,
+    "headquarters": "New Cairo, Egypt",
+    "notable_projects": ["Bloomfields Mostakbal City", "IL Monte Galala Sokhna", "Fouka Bay North Coast", "D-Bay North Coast"],
+    "total_delivered_units": 7500,
+    "reputation_notes": "Renowned for innovative educational, coastal, and integrated master developments with award-winning architectural concepts.",
+    "financial_solvency_rating": "AA-",
+    "evidence_ids": ["E107"]
+  },
+  {
+    "developer_id": "DEV_008",
+    "name": "Ora Developers",
+    "established_year": 2016,
+    "headquarters": "Zayed, Giza",
+    "notable_projects": ["ZED Towers Sheikh Zayed", "ZED East New Cairo", "Silversands North Coast", "Solana New Zayed"],
+    "total_delivered_units": 4500,
+    "reputation_notes": "Luxury global developer led by Naguib Sawiris, focused on ultra-premium residences, signature park towers, and high-end hospitality.",
+    "financial_solvency_rating": "AA+",
+    "evidence_ids": ["E108"]
+  },
+  {
+    "developer_id": "DEV_009",
+    "name": "Madinet Masr (MNHD)",
+    "established_year": 1959,
+    "headquarters": "Nasr City, Cairo",
+    "notable_projects": ["Taj City", "Sarai", "The Arena"],
+    "total_delivered_units": 40000,
+    "reputation_notes": "Historic national urban development company revitalized with flagship master developments on the Cairo-Suez corridor.",
+    "financial_solvency_rating": "AA",
+    "evidence_ids": ["E109"]
+  },
+  {
+    "developer_id": "DEV_010",
+    "name": "Al Ahly Sabbour",
+    "established_year": 1994,
+    "headquarters": "New Cairo, Egypt",
+    "notable_projects": ["Green Square", "L'Avenir", "Amwaj North Coast", "Gaia Ras El Hekma", "Keeva October"],
+    "total_delivered_units": 26000,
+    "reputation_notes": "Joint venture between the Sabbour engineering family and National Bank of Egypt (NBE); major pioneer in Mostakbal City.",
+    "financial_solvency_rating": "AA",
+    "evidence_ids": ["E110"]
+  }
+]

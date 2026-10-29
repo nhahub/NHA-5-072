@@ -1,0 +1,57 @@
+[
+  {
+    "report_id": "MKT_001",
+    "title": "Greater Cairo Residential Market Overview 2024-2025",
+    "region": "Greater Cairo",
+    "publication_date": "2024-11-15",
+    "doc_type": "market_report",
+    "source": "JLL / Colliers Market Intelligence Digest",
+    "summary": "Analysis of housing price escalation, payment plan duration trends, and currency hedges.",
+    "content": "Following the currency floatation and interest rate adjustments in Egypt, real estate has cemented its status as the primary domestic hedge against inflation and devaluation. Primary residential sales prices across Greater Cairo rose between 60% and 110% in nominal EGP terms year-on-year. To sustain absorption, leading Tier-1 developers (Emaar Misr, SODIC, Palm Hills, TMG) have maintained flexible payment plans averaging 7 to 10 years with down payments as low as 5% to 10%. Resale cash transactions frequently command discounts of 15% to 25% compared to multi-year deferred developer payment schedules.",
+    "evidence_ids": ["E201"]
+  },
+  {
+    "report_id": "MKT_002",
+    "title": "East Cairo vs. West Cairo Investment Dynamics",
+    "region": "New Cairo & Sheikh Zayed",
+    "publication_date": "2024-12-01",
+    "doc_type": "market_report",
+    "source": "Cairo Capital Real Estate Research",
+    "summary": "Comparative study of rental yields, occupancy rates, and capital appreciation between New Cairo and West Cairo.",
+    "content": "East Cairo (New Cairo, Golden Square, Mostakbal City) benefits from proximity to the American University in Cairo (AUC), multinational corporate headquarters on the Northern and Southern 90th axes, and connectivity to the New Administrative Capital. Rental yields in New Cairo for high-demand 2-3 bedroom furnished apartments range between 7.5% and 9.5% annually. In West Cairo (Sheikh Zayed, October), luxury compounds near the Smart Village and Arkan Plaza achieve rental yields between 6.5% and 8.0%, with rapid suburban expansion driven by Sphinx International Airport and the Grand Egyptian Museum (GEM).",
+    "evidence_ids": ["E202"]
+  },
+  {
+    "report_id": "MKT_003",
+    "title": "New Administrative Capital (NAC) Government Handover and Commercial Absorption",
+    "region": "New Administrative Capital",
+    "publication_date": "2024-10-20",
+    "doc_type": "market_report",
+    "source": "National Urban Observatory Report",
+    "summary": "Impact of ministerial relocation, Monorail operations, and CBD towers on R7 and R8 residential districts.",
+    "content": "With over 50,000 civil servants relocated to the Government District and the Central Business District (CBD) Iconic Tower nearing operational readiness, residential districts R7 and R8 are experiencing heightened delivery momentum. Entry-level finished prices in R7 range from 35,000 to 45,000 EGP per square meter, making it one of the most accessible suburban entry points with long installment horizons (up to 10 years). Key risks include execution delays among smaller private developers; institutional buyers are advised to focus on established Tier-1 and Tier-2 developers.",
+    "evidence_ids": ["E203"]
+  },
+  {
+    "report_id": "MKT_004",
+    "title": "North Coast & Ras El Hekma Phenomenon: Shift to Year-Round Destination",
+    "region": "North Coast",
+    "publication_date": "2025-01-10",
+    "doc_type": "market_report",
+    "source": "Mediterranean Coast Investment Review",
+    "summary": "Impact of the $35B ADQ Ras El Hekma mega-deal on coastal capital gains and short-term holiday rental yields.",
+    "content": "The landmark foreign direct investment agreement between Egypt and the UAE (ADQ) for the master development of Ras El Hekma has redefined the North Coast real estate trajectory. Historic short-term holiday rental yields during the 12-week summer season range from 10% to 15% on prime beach/lagoon chalets in developments like Marassi, Cali Coast, and Hacienda. Furthermore, infrastructural investments including the high-speed electric train and international airports are converting the corridor into a multi-season hospitality and second-home investment destination.",
+    "evidence_ids": ["E204"]
+  },
+  {
+    "report_id": "MKT_005",
+    "title": "Installment Plan Structure and Discount Mechanics",
+    "region": "Egypt National",
+    "publication_date": "2024-09-05",
+    "doc_type": "market_report",
+    "source": "Egyptian Real Estate Financial Advisory",
+    "summary": "Analysis of implicit interest in zero-percent installments and cash discount calculations.",
+    "content": "While Egyptian developer payment plans are marketed as 0% interest, the total contracted price embeds an implicit cost of capital compared to immediate cash settlements. Typically, a cash purchase secures a 20% to 35% discount against an 8-year installment plan. When evaluating off-plan investments, investors must balance the nominal capital appreciation against inflation and assess whether installment payments provide positive financial leverage. Maintenance deposits (typically 8% to 10% of unit price) are universally due prior to key handover.",
+    "evidence_ids": ["E205"]
+  }
+]
